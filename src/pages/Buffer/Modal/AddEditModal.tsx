@@ -42,6 +42,7 @@ const formSchema = z.object({
   // sold: z.any().optional(),
   percentage: z.any().optional(),
   peryears: z.any().optional(),
+  periodType: z.any().optional(),
   type: z.string().nonempty({ message: 'type is required' }),
   sizeWalltes: z.string().nonempty({ message: 'sizeWalltes is required' }),
   // expire_date: z
@@ -97,8 +98,9 @@ const Daytype: {
   value: string
   label: string
 }[] = [
-  { value: '7', label: '7 Days' },
-  { value: '30', label: '30 Days' },
+  { value: 'days', label: 'Days' },
+  { value: 'months', label: 'Months' },
+  { value: 'years', label: 'Years' },
 ]
 
 const AddEditModal: React.FC<AddEditModalProps> = ({
@@ -112,7 +114,9 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
   const { useGetAll: useGetAllCountries } =
     createCrudService<any>('country-assignment')
   const { useGetAll } = createCrudService<any>('project-assignment')
-  const { useGetAll: useGetAllAdmins } = createCrudService<any>('devoelper-assignment')
+  const { useGetAll: useGetAllAdmins } = createCrudService<any>(
+    'devoelper-assignment'
+  )
   const { mutate: createUser } = useCreate()
   const { mutate: updateUser } = useUpdateWithParams()
   // const { mutate: updateUser } = useUpdate()
@@ -129,8 +133,8 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
 
   const [countryId, setCountryId] = useState(33)
   const [walletId, setWalletId] = useState(1)
-    const [adminId, setAdminId] = useState(1)
-  
+  const [adminId, setAdminId] = useState(40)
+
   console.log('countryId', countryId)
   console.log('walletId', walletId)
   const [loading, setLoading] = useState(false)
@@ -165,24 +169,24 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
 
   const handleFormSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true)
-    let expire_date: Date | null = null;
-    const today = new Date(); 
-     if (values.peryears) { 
-      const peryears = Number(values.peryears); 
-      expire_date = new Date(today) as Date | null;
-      expire_date?.setDate(today.getDate() + peryears);
-     }
+    let expire_date: Date | null = null
+    const today = new Date()
+    if (values.peryears) {
+      const peryears = Number(values.peryears)
+      expire_date = new Date(today) as Date | null
+      expire_date?.setDate(today.getDate() + peryears)
+    }
     //  Create an object to hold all the categorized data
     const formData = {
       ...values,
       price: 1,
       number_of_unit: 1,
-      price_unit:1,
+      price_unit: 1,
       sold: 1,
       profitDistributed: 1,
       expire_date: expire_date?.toISOString() ?? '',
       asiangmanet: adminId ? adminId : adminIdCookies,
-      country_id: countryId ,
+      country_id: countryId,
       project_wallte_id: 37,
     }
     // const formDataEdite = {
@@ -281,7 +285,7 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
                   <FormItem>
                     <FormLabel>{t('Trade Types')}</FormLabel>
                     <FormControl>
-                    <SelectComp
+                      <SelectComp
                         defaultValue={initialData.asiangmanet}
                         onValueChange={(value) => setAdminId(Number(value))}
                         placeholder={t('Select admins')}
@@ -295,7 +299,7 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
                   </FormItem>
                 )}
               />
-{/* 
+              {/* 
               <FormField
                 control={form.control}
                 name='price'
@@ -374,13 +378,27 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
                 name='peryears'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('perdays')}</FormLabel>
+                    <FormLabel>{t('Period')}</FormLabel>
                     <FormControl>
-                    <SelectComp {...field} 
-                      defaultValue={initialData.peryears?.toString()} 
-                      onValueChange={field.onChange} 
-                      options={Daytype} 
-                    />
+                      <Input placeholder={t('Enter peryears')} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='periodType'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('periodType	')}</FormLabel>
+                    <FormControl>
+                      <SelectComp
+                        {...field}
+                        defaultValue={initialData.periodType?.toString()}
+                        onValueChange={field.onChange}
+                        options={Daytype}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -413,18 +431,18 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
                   <FormItem>
                     <FormLabel>{t('sizeWalltes')}</FormLabel>
                     <FormControl>
-                    <SelectComp
-                                             {...field}
-                                             defaultValue={initialData.sizeWalltes}
-                                             onValueChange={field.onChange}
-                                             options={walletType}
-                                           />
+                      <SelectComp
+                        {...field}
+                        defaultValue={initialData.sizeWalltes}
+                        onValueChange={field.onChange}
+                        options={walletType}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-             
+
               {/* <FormField
                 control={form.control}
                 name='profitDistributed'
@@ -448,9 +466,8 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
                   <FormItem>
                     <FormLabel>{t('statusApp')}</FormLabel>
                     <FormControl>
-                    <SelectComp
+                      <SelectComp
                         {...field}
-                       
                         onValueChange={field.onChange}
                         options={StatusApp}
                       />

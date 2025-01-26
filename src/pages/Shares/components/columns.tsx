@@ -33,7 +33,7 @@ export const columns: ColumnDef<any>[] = [
       return (
         <div className='flex space-x-2'>
           <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
-            {row.getValue('availableShare')}
+            {row.getValue('availableShare') - row.getValue('sold') }
           </span>
         </div>
       )

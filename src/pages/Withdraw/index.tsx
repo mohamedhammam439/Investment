@@ -14,13 +14,17 @@ import AddEditModal from './Modal/AddEditModal'
 import LanguageDropdown from '@/i18n/LanguageDropdown'
 import createCrudService from '@/api/services/crudService'
 import { useTranslation } from "react-i18next";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
 
 
 function Withdraw() {
   // debugger
   const allServiceUser = createCrudService<any>('withdraw')
-  const { useGetAll } = allServiceUser
+  const { useGetAll , useGetAllWithdrawReject , useGetAllWithdrawApproved } = allServiceUser
   const { data: allUserData, isLoading } = useGetAll()
+  const { data: allRejects } = useGetAllWithdrawReject()
+  const { data: allApproves } = useGetAllWithdrawApproved()
   const [isAddEditModalOpen, setIsAddEditOpen] = useState(false)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [isDelModalOpen, setIsDelModalOpen] = useState(false)
@@ -92,35 +96,108 @@ function Withdraw() {
           </div>
         </Layout.Header>
 
+       
         <Layout.Body>
           <div className='mb-2 flex items-center justify-between space-y-2'>
-            <div>
-              <h2 className='text-2xl font-bold tracking-tight'>
-              {t('Withdraw')}
-              </h2>
-             
-            </div>
-          </div>
-          <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0'>
-            <DataTable
-              // handleDel={handleOpenDeleteModal}
-              handleRowClick={handleOpenViewModal}
-              data={allUserData?.data || []}
-              columns={columns}
-              // handleEdit={handleOpenEditModal}
-              actionBtn={
-                <>
-                  {/* <Button
+            <div className='w-full'>
+              <Tabs defaultValue='pending' className='w-full'>
+                <TabsList className='mx-auto flex'>
+                  <TabsTrigger className='sm:mx-1 lg:mx-8' value='pending'>
+                    {t('Pending')}
+                  </TabsTrigger>
+                  <TabsTrigger className='sm:mx-1 lg:mx-8' value='approved'>
+                    {t('Approved')}
+                  </TabsTrigger>
+                  <TabsTrigger className='sm:mx-1 lg:mx-8' value='rejected'>
+                    {t('Rejected')}
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value='pending'>
+                  <div>
+                    <h2 className='text-2xl font-bold tracking-tight'>
+                      {t('Withdraw')}
+                    </h2>
+                  </div>
+                  <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0'>
+                    <DataTable
+                      // handleDel={handleOpenDeleteModal}
+                      handleRowClick={handleOpenViewModal}
+                      data={allUserData?.data || []}
+                      columns={columns}
+                      // handleEdit={handleOpenEditModal}
+                      actionBtn={
+                        <>
+                          {/* <Button
                     variant={'outline'}
                     onClick={() => handleCreateTask()}
                   >
                     <PlusIcon /> <span className='ms-1'>{t("Add New")}</span>
                   </Button> */}
-                </>
-              }
-              meta={allUserData?.meta}
-              loading={isLoading}
-            />
+                        </>
+                      }
+                      meta={allUserData?.meta}
+                      loading={isLoading}
+                    />
+                  </div>
+                </TabsContent>
+                <TabsContent value='approved'>
+                  <div>
+                    <h2 className='text-2xl font-bold tracking-tight'>
+                      {t('Withdraw')}
+                    </h2>
+                  </div>
+                  <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0'>
+                    <DataTable
+                      // handleDel={handleOpenDeleteModal}
+                      handleRowClick={handleOpenViewModal}
+                      data={allApproves?.data || []}
+                      columns={columns}
+                      // handleEdit={handleOpenEditModal}
+                      actionBtn={
+                        <>
+                          {/* <Button
+                    variant={'outline'}
+                    onClick={() => handleCreateTask()}
+                  >
+                    <PlusIcon /> <span className='ms-1'>{t("Add New")}</span>
+                  </Button> */}
+                        </>
+                      }
+                      meta={allUserData?.meta}
+                      loading={isLoading}
+                    />
+                  </div>
+                </TabsContent>
+                <TabsContent value='rejected'>
+                  <div>
+                    <h2 className='text-2xl font-bold tracking-tight'>
+                      {t('Withdraw')}
+                    </h2>
+                  </div>
+                  <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0'>
+                    <DataTable
+                      // handleDel={handleOpenDeleteModal}
+                      handleRowClick={handleOpenViewModal}
+                      data={allRejects?.data || []}
+                      columns={columns}
+                      // handleEdit={handleOpenEditModal}
+                      actionBtn={
+                        <>
+                          {/* <Button
+                    variant={'outline'}
+                    onClick={() => handleCreateTask()}
+                  >
+                    <PlusIcon /> <span className='ms-1'>{t("Add New")}</span>
+                  </Button> */}
+                        </>
+                      }
+                      meta={allUserData?.meta}
+                      loading={isLoading}
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </Layout.Body>
       </Layout>

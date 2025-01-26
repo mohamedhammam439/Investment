@@ -159,7 +159,7 @@ export const columns: ColumnDef<any>[] = [
     header: ({ column }) => {
       const { t } = useTranslation();
       return (
-      <DataTableColumnHeader column={column} title={t('perday')} />
+      <DataTableColumnHeader column={column} title={t('Period')} />
     )},
     cell: ({ row }:any) => {
       console.log('row', row)
@@ -171,7 +171,26 @@ export const columns: ColumnDef<any>[] = [
         </div>
       )
     },
-  },{
+  },
+  {
+    accessorKey: 'periodType',
+    header: ({ column }) => {
+      const { t } = useTranslation();
+      return (
+      <DataTableColumnHeader column={column} title={t('periodType')} />
+    )},
+    cell: ({ row }:any) => {
+      console.log('row', row)
+      return (
+        <div className='flex space-x-2'>
+          <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
+            {row.getValue('periodType')}
+          </span>
+        </div>
+      )
+    },
+  }
+  ,{
     accessorKey: 'type',
     header: ({ column }) => {
       const { t } = useTranslation();

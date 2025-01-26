@@ -31,17 +31,17 @@ import axios from 'axios'
 
 // Define the schema
 const formSchema = z.object({
-  name: z.string().nonempty({ message: 'name is required' }).optional(),
-  status: z.string().nonempty({ message: 'status is required' }).optional(),
-  expireDate: z.string().nonempty({ message: 'expireDate is required' }).optional(),
- 
-  availableShare: z.any().optional(),
-  period: z.any().optional(),
-  price: z.any().optional(),
-  profit: z.any().optional(),
-  sold: z.any().optional(),
-  dividendDistributed: z.any().optional(),
+  finsh_quarter: z.string().nonempty({ message: 'finsh_quarter is required' }),
 })
+const Daytype: {
+  value: string
+  label: string
+}[] = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'launched', label: 'Launched' },
+  { value: 'stopped', label: 'Stopped' },
+  { value: 'cancelled', label: 'Cancelled' },
+]
 
 interface AddEditModalProps {
   isOpen: boolean
@@ -56,7 +56,7 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
   initialData = {},
   modalType,
 }) => {
-  const { useCreate, useUpdateWithParams } = createCrudService<any>('shares')
+  const { useCreate, useUpdateWithParams } = createCrudService<any>('update-shares-history')
  
   const { mutate: createUser } = useCreate()
   const { mutate: updateUser } = useUpdateWithParams()
@@ -146,127 +146,23 @@ const AddEditModal: React.FC<AddEditModalProps> = ({
             className='my-5 px-4'
           >
             <div className='grid h-[300px] grid-cols-1 gap-y-4 overflow-x-hidden overflow-y-scroll px-2 md:w-auto md:grid-cols-2 md:gap-4'>
-              <FormField
-                control={form.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('name')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t('Enter name')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='availableShare'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('availableShare')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t('Enter availableShare')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='period'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('period')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t('Enter period')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-<FormField
-                control={form.control}
-                name='price'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('price')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t('Enter price')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> <FormField
-              control={form.control}
-              name='profit'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('profit')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('Enter profit')} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> <FormField
-            control={form.control}
-            name='dividendDistributed'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('dividendDistributed')}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t('Enter dividendDistributed')} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> <FormField
-          control={form.control}
-          name='sold'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('sold')}</FormLabel>
-              <FormControl>
-                <Input placeholder={t('Enter sold')} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> 
-        <FormField
-        control={form.control}
-        name='expireDate'
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('expireDate')}</FormLabel>
-            <FormControl>
-              <Input placeholder={t('Enter expireDate')} {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='status'
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('status')}</FormLabel>
-            <FormControl>
-              <Input placeholder={t('Enter status')} {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-           
-
-             
-            </div>
-
+                         <FormField
+                           control={form.control}
+                           name='finsh_quarter'
+                           render={({ field }) => (
+                             <FormItem>
+                               <FormLabel>{t('finsh_quarter')}</FormLabel>
+                               <SelectComp
+                                 {...field}
+                                 defaultValue={initialData.periodType?.toString()}
+                                 onValueChange={field.onChange}
+                                 options={Daytype}
+                               />
+                               <FormMessage />
+                             </FormItem>
+                           )}
+                         />
+                       </div>
             <div className='col-span-full mt-10 flex items-center justify-center space-x-4 md:justify-between md:px-8'>
               <Button
                 size='lg'

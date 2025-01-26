@@ -113,24 +113,7 @@ export const columns: ColumnDef<any>[] = [
     },
   },
 
-  {
-    accessorKey: 'end_subscrip',
-    header: ({ column }) => {
-      const { t } = useTranslation();
-      return (
-      <DataTableColumnHeader column={column} title={t('end_subscrip')} />
-    )},
-    cell: ({ row }:any) => {
-      console.log('row', row)
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
-            {row.getValue('end_subscrip')}
-          </span>
-        </div>
-      )
-    },
-  },
+ 
   {
     accessorKey: 'status',
     header: ({ column }) => {
@@ -144,6 +127,24 @@ export const columns: ColumnDef<any>[] = [
         <div className='flex space-x-2'>
           <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
             {row.getValue('status')? "True" : "False"}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'finsh_quarter',
+    header: ({ column }) => {
+      const { t } = useTranslation();
+      return (
+      <DataTableColumnHeader column={column} title={t('finsh_quarter')} />
+    )},
+    cell: ({ row }:any) => {
+      console.log('row', row)
+      return (
+        <div className='flex space-x-2'>
+          <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
+            {row.getValue('finsh_quarter')}
           </span>
         </div>
       )

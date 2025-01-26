@@ -9,6 +9,9 @@ import { DataTableColumnHeader } from '@/components/custom/DataTableComp/data-ta
 import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import { useQueryClient } from '@tanstack/react-query'
+import { Button } from '@/components/custom/button'
+import Cookies from 'js-cookie'
+import { useState } from 'react'
 const baseURL = import.meta.env.VITE_API_BASE_URL
 
 export const columns: ColumnDef<any>[] = [
@@ -148,16 +151,110 @@ export const columns: ColumnDef<any>[] = [
   //   },
   // },
   
+  // {
+  //   accessorKey: 'status',
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title='status' />
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className='flex space-x-2'>
+  //         <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
+  //           {row.getValue('status') }
+  //         </span>
+  //       </div>
+  //     )
+  //   },
+  // },
   {
     accessorKey: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='status' />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation();
+      return (
+      <DataTableColumnHeader column={column} title={t('status')} />
+    )},
     cell: ({ row }) => {
+      const { t } = useTranslation();
+
+      const { id, status } = row.original
+      const queryClient: any = useQueryClient()
+      console.log('id', id)
+      console.log('withdrawStatus', status)
+
+      // Function to handle withdraw approval
+
+      const handleKycAction = async (status: string) => {
+        const accessToken = Cookies.get('accessToken')
+        try {
+          // Include the access token in the request headers
+          const config = {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            withCredentials: true,
+          }
+          if (status === 'approve') {
+            await axios.put(baseURL + `withdraw/${id}`, {status}, config)
+          } else {
+            await axios.put(
+              baseURL + `withdraw/${id}`,
+              { status},
+              config
+            )
+          }
+
+          queryClient.invalidateQueries(['withdraw'])
+        } catch (error) {
+          console.error('Error updating user status status:', error)
+          // Handle error as needed
+        }
+      }
+      
       return (
         <div className='flex space-x-2'>
           <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
-            {row.getValue('status') }
+            {status === 'pending' ? (
+              <>
+                <Button
+                  variant='default'
+                  size='sm'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleKycAction('approve')
+                  }}
+                >
+                  {t("Approve")}
+                </Button>
+                <Button
+                  variant='destructive'
+                  size='sm'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleKycAction('reject')
+                  }}
+                >
+                  {t("Reject")}
+                </Button>
+               
+                {/* <Dialog open={isDialogOpen} onOpenChange={()=> setDialogOpen(true)}   >
+                  <DialogTrigger asChild>
+                  
+                  </DialogTrigger> */}
+                  {/* <AddReason
+                    IsOpen={isDialogOpen}
+                    handleClick={(reason: any) =>
+                      handleKycAction('reject', reason)
+                    }
+                    reason={reason}
+                    setReason={(reason: string) => setReason(reason)}
+                    setDialogOpen={handleCloseModal}
+                  /> */}
+                {/* </Dialog> */}
+              </>
+            ) : (
+              status
+            )}
           </span>
         </div>
       )
